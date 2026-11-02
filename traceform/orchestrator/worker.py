@@ -2,6 +2,7 @@
 import argparse
 import asyncio
 import logging
+import os
 from dotenv import load_dotenv
 
 
@@ -32,7 +33,7 @@ async def main(once=False):
         if once:
             await run_once()
         else:
-            await run_forever()
+            await run_forever(worker_id=os.getenv("TRACEFORM_WORKER_ID"))
     finally:
         await engine.dispose()
 

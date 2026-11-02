@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: traceform-backend
+    runtime: docker
+    plan: standard
+    numInstances: 1
+    dockerfilePath: ./traceform/Dockerfile.render
+    dockerContext: .
+    healthCheckPath: /api/v1/healthz/service
+    maxShutdownDelaySeconds: 30
+    disk:
+      name: traceform-files
+      mountPath: /var/data
+      sizeGB: 10
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: TRACEFORM_MASTER_KEY
+        sync: false
+      - key: API_KEYS
+        sync: false
+      - key: TRACEFORM_WEB_ORIGINS
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: TRACEFORM_AUTO_MIGRATE
+        value: 'false'
+      - key: OBJECT_STORAGE_PATH
+        value: /var/data/traceform

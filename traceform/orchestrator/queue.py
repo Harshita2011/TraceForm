@@ -242,8 +242,8 @@ async def job_summary(db, generation_id):
             "extraction_reused": job.extraction_reused}
 
 
-async def run_forever(factory=AsyncSessionLocal, poll_seconds=1):
-    worker_id = f"{socket.gethostname()}:{os.getpid()}:{uuid4().hex[:8]}"
+async def run_forever(factory=AsyncSessionLocal, poll_seconds=1, worker_id=None):
+    worker_id = worker_id or f"{socket.gethostname()}:{os.getpid()}:{uuid4().hex[:8]}"
     while True:
         try:
             worked = await run_once(worker_id, factory)

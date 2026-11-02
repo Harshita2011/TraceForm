@@ -25,6 +25,7 @@ Phase 8 implementation is verified locally. The latest container suites passed *
 - Start with [local development](development/local-development.md), [frontend setup](development/frontend.md) or [backend setup](development/backend.md).
 - See the [current verification report](verification/phase-8.md), [feature ledger](planning/feature-ledger.md) and [implementation plan](planning/implementation-plan.md).
 - Follow [contribution guidance](CONTRIBUTING.md) when preparing changes.
+- Deploy the backend with [Render and Neon](deployment/render.md) and the frontend with [Vercel](deployment/vercel.md).
 - Earlier [phase specifications](archive/phases/00_repo_scaffold.md) are archived history; they do not override current setup or release status.
 - [Golden artifact examples](examples/golden-artifacts/) are illustrative test fixtures, not measured production-quality results.
 

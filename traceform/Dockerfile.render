@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tesseract-ocr libglib2.0-0 libsm6 libxext6 libxrender1 \
+    libreoffice-writer libreoffice-impress fonts-noto-core fonts-noto-cjk fonts-noto-color-emoji \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 traceform && useradd --uid 10001 --gid traceform --create-home traceform
+COPY traceform/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY --chown=traceform:traceform traceform/ .
+COPY --chown=traceform:traceform docs/ /docs/
+# Bootstrap fixes ownership of the mounted storage directory, then drops root
+# before migrations or either long-running process. The mount must exist at runtime.
+ENV PYTHONUNBUFFERED=1 HOME=/home/traceform
+EXPOSE 10000
+CMD ["python", "-m", "deployment.render"]

@@ -6,13 +6,14 @@ import os
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from db.connection import connection_settings
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./traceform.db")
 
-connect_args = {"check_same_thread": False, "timeout": 30} if "sqlite" in DATABASE_URL else {}
+connection_url, connect_args = connection_settings(DATABASE_URL)
 
 engine = create_async_engine(
-    DATABASE_URL,
+    connection_url,
     echo=os.getenv("TRACEFORM_SQL_ECHO", "false").lower() == "true",
     pool_pre_ping=True if "sqlite" not in DATABASE_URL else False,
     connect_args=connect_args,

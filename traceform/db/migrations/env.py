@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 # Import all models so Alembic can detect them
 from db.models import Base  # noqa: F401 — registers all models
+from db.connection import connection_settings
 
 config = context.config
 
@@ -23,8 +24,11 @@ target_metadata = Base.metadata
 
 # Override sqlalchemy.url from environment if set
 database_url = os.getenv("DATABASE_URL")
+connect_args = {}
 if database_url:
-    config.set_main_option("sqlalchemy.url", database_url)
+    url, connect_args = connection_settings(database_url)
+    # ConfigParser interprets percent signs in URL-encoded passwords otherwise.
+    config.set_main_option("sqlalchemy.url", url.render_as_string(hide_password=False).replace("%", "%%"))
 
 
 def run_migrations_offline() -> None:
@@ -50,6 +54,7 @@ async def run_async_migrations() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=connect_args,
     )
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)

@@ -1,0 +1,33 @@
+name: Render startup verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master, main]
+    paths: ['render.yaml', 'traceform/**', 'scripts/verify_render.py', '.dockerignore', '.github/workflows/render-deployment.yml']
+  pull_request:
+    paths: ['render.yaml', 'traceform/**', 'scripts/verify_render.py', '.dockerignore', '.github/workflows/render-deployment.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  render-startup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install cryptography
+      - name: Build combined API and worker image
+        run: docker build -t traceform:render-check -f traceform/Dockerfile.render .
+      - name: Verify migrations, worker supervision and persistent storage
+        run: python scripts/verify_render.py
+      - name: Save sanitized verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-startup-results
+          path: .runtime/render-verification/report.json

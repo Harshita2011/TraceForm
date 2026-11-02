@@ -4,7 +4,7 @@ Live deployment was deferred by the user on 2 November 2026. No Vercel project, 
 
 ## Deployment layout
 
-Deploy the Next.js frontend with Vercel. Keep the API and independent worker running from the same backend image, with PostgreSQL, durable storage and the same provider encryption key. The existing Compose stack is verified locally; it needs a backend host with persistent storage and a public HTTPS endpoint. This repository does not configure Vercel Daemons or a managed database/storage service. Hosting those components requires choosing and verifying the actual services.
+Deploy the Next.js frontend with Vercel. For the selected backend hosting, follow [Render with Neon PostgreSQL](render.md): a single disk-backed Docker service runs the API and worker after migrations. The existing Compose stack remains available for local verification. Real hosted acceptance requires the deployed URLs and checks below.
 
 Import the repository into Vercel and set **Root Directory** to `frontend`. Use Next.js, `npm ci`, `npm run build` and the default Next output. `frontend/vercel.json` supplies build settings. Set these environment variables for the intended environment, then rebuild:
 
