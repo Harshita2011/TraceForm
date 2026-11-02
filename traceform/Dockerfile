@@ -11,4 +11,4 @@ COPY --chown=traceform:traceform docs/ /docs/
 RUN mkdir -p /app/storage_data && chown traceform:traceform /app/storage_data
 USER traceform
 EXPOSE 8000
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/bin/sh", "/app/start.sh"]
