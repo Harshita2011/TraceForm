@@ -146,9 +146,11 @@ async def test_pdf_export_uses_real_converter(client, db_session):
     assert response.status_code == 200 and response.content.startswith(b'%PDF')
     import pypdfium2 as pdfium
     document = pdfium.PdfDocument(response.content)
-    text = ''.join(page.get_textpage().get_text_range() for page in document)
+    # PDF pages are separate text streams. Preserve a boundary so a footer page
+    # number cannot merge with the next page's first word (for example, '1text.').
+    text = '\n'.join(page.get_textpage().get_text_range() for page in document)
     text = re.sub(r'\s+', ' ', text)
-    # PDF extraction may interleave the next page's footer between two body words.
+    # Footers may appear between body words; every repeated word must survive.
     assert len(document) > 1 and len(re.findall(r'\bPreserved\b', text)) == 500
     assert len(re.findall(r'\btext\.', text)) == 500 and 'END_MARKER' in text
 
