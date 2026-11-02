@@ -1,0 +1,32 @@
+{
+  "id": "ir_sample_001",
+  "domain": "incident_report",
+  "title": "Cloud Infrastructure Database Failover Incident Brief",
+  "source_document": "On August 14, 2026, at 03:12 UTC, the primary US-East Postgres cluster experienced automated failover due to physical storage degradation. Total customer downtime was 4 minutes and 18 seconds. Zero data loss occurred as synchronous replication maintained zero RPO. Recovery was completed at 03:16 UTC with all 14 database nodes returning to healthy state.",
+  "ground_truth_claims": [
+    {
+      "claim": "Incident occurred on August 14, 2026, at 03:12 UTC.",
+      "expected_source_span": "On August 14, 2026, at 03:12 UTC",
+      "must_be_cited": true
+    },
+    {
+      "claim": "Downtime was exactly 4 minutes and 18 seconds.",
+      "expected_source_span": "4 minutes and 18 seconds",
+      "must_be_cited": true
+    },
+    {
+      "claim": "Zero data loss occurred with zero RPO.",
+      "expected_source_span": "Zero data loss occurred as synchronous replication maintained zero RPO",
+      "must_be_cited": true
+    },
+    {
+      "claim": "All 14 database nodes returned to healthy state by 03:16 UTC.",
+      "expected_source_span": "all 14 database nodes returning to healthy state",
+      "must_be_cited": true
+    }
+  ],
+  "expected_style": "executive_briefing",
+  "target_output_types": ["executive_briefing", "strategic_memo"],
+  "adversarial_type": "none",
+  "expected_to_fail_compliance": false
+}

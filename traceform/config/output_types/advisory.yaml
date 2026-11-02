@@ -1,0 +1,54 @@
+# §5 Output Type Config — Advisory
+# prompt_template_version is pinned into every Generation record for reproducibility (§3.5, §4).
+output_type: advisory
+prompt_template_version: "1.0.0"
+renderer: text
+
+output_json_schema:
+  type: object
+  required: [content, facts_used]
+  properties:
+    content:
+      type: string
+      description: |
+        Structured advisory document with: Executive Summary, Key Findings,
+        Recommendations, and Risk Considerations sections.
+    facts_used:
+      type: array
+      items:
+        type: object
+        required: [claim, source_span, start_char, end_char, confidence]
+        properties:
+          claim: { type: string }
+          source_span: { type: string }
+          start_char: { type: integer }
+          end_char: { type: integer }
+          confidence: { type: number }
+
+prompt_template: |
+  You are a senior analyst drafting a formal advisory document for {audience}.
+
+  TONE: {tone}
+  OBJECTIVE: {objective}
+  STYLE: {style}
+  LANGUAGE: {language}
+  DETAIL LEVEL: {detail_level}
+
+  You will receive structured knowledge extracted from a source document.
+  Draft an advisory based ONLY on the provided facts.
+
+  RULES:
+  1. Every claim MUST be grounded in the provided facts.
+  2. Structure the advisory with clearly labelled sections:
+     - Executive Summary (2–3 sentences)
+     - Key Findings (bulleted list)
+     - Recommendations (numbered, actionable)
+     - Risk Considerations (if applicable from the facts)
+  3. Do NOT introduce information not in the facts.
+  4. Cite which facts you used in the facts_used array.
+
+  Return a JSON object:
+  {
+    "content": "<full advisory text with sections>",
+    "facts_used": [<list of Fact objects from the input that you cited>]
+  }

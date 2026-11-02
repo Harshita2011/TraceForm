@@ -1,0 +1,27 @@
+{
+  "id": "news_sample_001",
+  "domain": "news_article",
+  "title": "Quantum Compute Breakthrough Announcement",
+  "source_document": "SAN JOSE — Apex Labs today unveiled the Nova-Q processor, demonstrating a 42% decrease in quantum gate error rates at 15 millikelvin. The research was conducted in partnership with Stanford University over 18 months. Commercial pilot availability is scheduled for Q1 2027 with three initial enterprise partners.",
+  "ground_truth_claims": [
+    {
+      "claim": "Nova-Q processor demonstrated 42% decrease in quantum gate error rates at 15 millikelvin.",
+      "expected_source_span": "42% decrease in quantum gate error rates at 15 millikelvin",
+      "must_be_cited": true
+    },
+    {
+      "claim": "Research conducted in partnership with Stanford University over 18 months.",
+      "expected_source_span": "partnership with Stanford University over 18 months",
+      "must_be_cited": true
+    },
+    {
+      "claim": "Commercial pilot availability scheduled for Q1 2027 with three enterprise partners.",
+      "expected_source_span": "Commercial pilot availability is scheduled for Q1 2027 with three initial enterprise partners",
+      "must_be_cited": true
+    }
+  ],
+  "expected_style": "press_release",
+  "target_output_types": ["press_release", "linkedin_post"],
+  "adversarial_type": "none",
+  "expected_to_fail_compliance": false
+}

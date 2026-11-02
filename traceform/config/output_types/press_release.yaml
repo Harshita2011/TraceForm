@@ -1,0 +1,57 @@
+# §5 Output Type Config — Press Release
+# prompt_template_version is pinned into every Generation record for reproducibility (§3.5, §4).
+output_type: press_release
+prompt_template_version: "1.0.0"
+renderer: text
+
+output_json_schema:
+  type: object
+  required: [content, facts_used]
+  properties:
+    content:
+      type: string
+      description: |
+        Standard press release format: headline, dateline, lead paragraph (5 Ws),
+        body paragraphs, executive quote, boilerplate, and media contact section.
+    facts_used:
+      type: array
+      items:
+        type: object
+        required: [claim, source_span, start_char, end_char, confidence]
+        properties:
+          claim: { type: string }
+          source_span: { type: string }
+          start_char: { type: integer }
+          end_char: { type: integer }
+          confidence: { type: number }
+
+prompt_template: |
+  You are a PR professional writing a press release for {audience}.
+
+  TONE: {tone}
+  OBJECTIVE: {objective}
+  STYLE: {style}
+  LANGUAGE: {language}
+  DETAIL LEVEL: {detail_level}
+
+  You will receive structured knowledge extracted from a source document.
+  Write a press release based ONLY on the provided facts.
+
+  RULES:
+  1. Follow standard AP-style press release format:
+     - FOR IMMEDIATE RELEASE header
+     - Compelling headline (title case)
+     - City, Date — Lead paragraph answering Who, What, When, Where, Why
+     - 2–3 body paragraphs expanding on the lead
+     - One attributed executive quote (use a named person from the entities if available)
+     - Boilerplate "About [Org]" section (use entity data only)
+     - ### end marker
+  2. Every factual claim MUST come from the provided facts.
+  3. Do NOT introduce information not in the facts.
+  4. Cite which facts you used in the facts_used array.
+
+  Return a JSON object:
+  {
+    "content": "<full press release text>",
+    "facts_used": [<list of Fact objects from the input that you cited>]
+  }

@@ -1,0 +1,60 @@
+# §5 Output Type Config — Infographic
+# prompt_template_version is pinned into every Generation record for reproducibility (§3.5, §4).
+#
+# V1 SCOPE NOTE: This output type produces structured data-spec JSON (text + data) that a
+# rendering layer can use to generate a visual infographic. No image generation is performed
+# in V1 — the PRD does not specify an image generation tool, and §6's tech stack includes
+# no image generation service. This is a deliberate scope decision, not an oversight.
+# The content field contains a structured JSON specification ready for a future rendering layer.
+output_type: infographic
+prompt_template_version: "1.0.0"
+renderer: text
+
+output_json_schema:
+  type: object
+  required: [content, facts_used]
+  properties:
+    content:
+      type: string
+      description: |
+        JSON string encoding an infographic data specification with:
+          headline (string), sections (list of {title, stat, description}),
+          key_takeaway (string).
+        A future rendering layer will convert this to a visual infographic.
+    facts_used:
+      type: array
+      items:
+        type: object
+        required: [claim, source_span, start_char, end_char, confidence]
+        properties:
+          claim: { type: string }
+          source_span: { type: string }
+          start_char: { type: integer }
+          end_char: { type: integer }
+          confidence: { type: number }
+
+prompt_template: |
+  You are a data visualisation specialist preparing infographic content for {audience}.
+
+  TONE: {tone}
+  OBJECTIVE: {objective}
+  STYLE: {style}
+  LANGUAGE: {language}
+  DETAIL LEVEL: {detail_level}
+
+  You will receive structured knowledge extracted from a source document.
+  Produce an infographic data specification based ONLY on the provided facts.
+
+  RULES:
+  1. Extract the most compelling 3–6 stats, facts, or findings suitable for visual display.
+  2. Every data point MUST come from the provided facts.
+  3. Write a punchy headline and a clear key takeaway.
+  4. Format each section as: title, stat (a number or short phrase), description (1 sentence).
+  5. Do NOT introduce information not in the facts.
+  6. Cite which facts you used in the facts_used array.
+
+  Return a JSON object where "content" is itself a JSON string:
+  {
+    "content": "{\"headline\": \"...\", \"sections\": [{\"title\": \"...\", \"stat\": \"...\", \"description\": \"...\"}], \"key_takeaway\": \"...\"}",
+    "facts_used": [<list of Fact objects from the input that you cited>]
+  }

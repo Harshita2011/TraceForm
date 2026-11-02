@@ -1,0 +1,13 @@
+{
+  "name": "traceform-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint",
+    "test": "npm --prefix frontend test",
+    "typecheck": "npm --prefix frontend exec -- tsc --noEmit -p frontend/tsconfig.json"
+  }
+}

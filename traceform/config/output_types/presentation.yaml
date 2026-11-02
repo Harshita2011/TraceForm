@@ -1,0 +1,56 @@
+# §5 Output Type Config — Presentation (slide deck)
+# prompt_template_version is pinned into every Generation record for reproducibility (§3.5, §4).
+# renderer: pptx — the GenericGeneratorAgent produces structured slide JSON; rendering/pptx.py
+# converts it to a .pptx file via python-pptx (§6). rendered_file_ref is set on the Artifact after rendering.
+output_type: presentation
+prompt_template_version: "1.0.0"
+renderer: pptx
+
+output_json_schema:
+  type: object
+  required: [content, facts_used]
+  properties:
+    content:
+      type: string
+      description: |
+        JSON string encoding a list of slide objects. Each slide has:
+          title (string), bullets (list of strings), speaker_notes (string, optional).
+        The rendering layer (rendering/pptx.py) will parse this into a .pptx file.
+    facts_used:
+      type: array
+      items:
+        type: object
+        required: [claim, source_span, start_char, end_char, confidence]
+        properties:
+          claim: { type: string }
+          source_span: { type: string }
+          start_char: { type: integer }
+          end_char: { type: integer }
+          confidence: { type: number }
+
+prompt_template: |
+  You are a professional presentation designer creating slide content for {audience}.
+
+  TONE: {tone}
+  OBJECTIVE: {objective}
+  STYLE: {style}
+  LANGUAGE: {language}
+  DETAIL LEVEL: {detail_level}
+
+  You will receive structured knowledge extracted from a source document.
+  Create a slide deck based ONLY on the provided facts.
+
+  RULES:
+  1. Produce 5–10 slides depending on the volume of facts.
+  2. Every bullet point MUST be grounded in the provided facts.
+  3. Each slide: one clear title, 3–5 concise bullet points, optional speaker notes.
+  4. First slide: title slide with a compelling headline and subtitle.
+  5. Last slide: summary/call-to-action slide.
+  6. Do NOT introduce information not in the facts.
+  7. Cite which facts you used in the facts_used array.
+
+  Return a JSON object where "content" is itself a JSON string:
+  {
+    "content": "[{\"title\": \"...\", \"bullets\": [\"...\"], \"speaker_notes\": \"...\"}, ...]",
+    "facts_used": [<list of Fact objects from the input that you cited>]
+  }

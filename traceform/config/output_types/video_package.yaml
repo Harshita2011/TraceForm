@@ -1,0 +1,62 @@
+# §5 Output Type Config — Video Package
+# prompt_template_version is pinned into every Generation record for reproducibility (§3.5, §4).
+#
+# V1 SCOPE NOTE (§3.1, §3.3): Video Package in V1 produces:
+#   1. A narration script (text)
+#   2. A storyboard description (shot-by-shot breakdown)
+#   3. References to any ingested video file (via Source.raw_content_ref if a video was attached)
+# It does NOT generate, encode, or synthesise actual video. The PRD (§3.1) explicitly scopes
+# video ingestion as "store the file reference" only, and §3.3 does not specify a video
+# generation tool. Actual video production is out of V1 scope.
+output_type: video_package
+prompt_template_version: "1.0.0"
+renderer: text
+
+output_json_schema:
+  type: object
+  required: [content, facts_used]
+  properties:
+    content:
+      type: string
+      description: |
+        JSON string encoding: {
+          script: string (full narration script),
+          storyboard: list of {scene_number, visual_description, narration, duration_seconds},
+          video_reference: string | null (raw_content_ref from ingested video, if any)
+        }
+    facts_used:
+      type: array
+      items:
+        type: object
+        required: [claim, source_span, start_char, end_char, confidence]
+        properties:
+          claim: { type: string }
+          source_span: { type: string }
+          start_char: { type: integer }
+          end_char: { type: integer }
+          confidence: { type: number }
+
+prompt_template: |
+  You are a video production scriptwriter creating a video package for {audience}.
+
+  TONE: {tone}
+  OBJECTIVE: {objective}
+  STYLE: {style}
+  LANGUAGE: {language}
+  DETAIL LEVEL: {detail_level}
+
+  You will receive structured knowledge extracted from a source document.
+  Produce a video package (script + storyboard) based ONLY on the provided facts.
+
+  RULES:
+  1. Write a full narration script (target: 60–120 seconds of spoken content at ~130 wpm).
+  2. Break the storyboard into 4–8 scenes. Each scene: visual description, narration excerpt, duration.
+  3. Every claim MUST come from the provided facts.
+  4. Do NOT introduce information not in the facts.
+  5. Cite which facts you used in the facts_used array.
+
+  Return a JSON object where "content" is itself a JSON string:
+  {
+    "content": "{\"script\": \"...\", \"storyboard\": [{\"scene_number\": 1, \"visual_description\": \"...\", \"narration\": \"...\", \"duration_seconds\": 15}], \"video_reference\": null}",
+    "facts_used": [<list of Fact objects from the input that you cited>]
+  }

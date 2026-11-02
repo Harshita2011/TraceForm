@@ -1,0 +1,43 @@
+# §3.1.1 Sensitivity Classifier — configurable keyword list for heuristic detection.
+# LIMITATION: This is a stated limitation of V1 (§3.1.1, §10 Risks).
+# It is a rules-based heuristic, NOT a learned model. ML classifier explicitly deferred per §1.4.
+# Add or modify terms here without any code changes.
+
+# High-confidence markers — document header/banner patterns
+high_confidence_markers:
+  - "CONFIDENTIAL"
+  - "STRICTLY CONFIDENTIAL"
+  - "RESTRICTED"
+  - "FOR INTERNAL USE ONLY"
+  - "INTERNAL USE ONLY"
+  - "NOT FOR DISTRIBUTION"
+  - "PRIVILEGED AND CONFIDENTIAL"
+  - "ATTORNEY-CLIENT PRIVILEGED"
+  - "TRADE SECRET"
+  - "PROPRIETARY"
+  - "DO NOT DISTRIBUTE"
+  - "COMPANY CONFIDENTIAL"
+  - "CLASSIFIED"
+
+# Internal markers — lower confidence, suggest INTERNAL sensitivity
+internal_markers:
+  - "INTERNAL"
+  - "INTERNAL ONLY"
+  - "INTERNAL DISTRIBUTION"
+  - "FOR STAFF"
+  - "EMPLOYEE ONLY"
+  - "NOT FOR PUBLIC RELEASE"
+  - "DRAFT"
+  - "PRE-DECISIONAL"
+  - "DELIBERATIVE"
+  - "SENSITIVE BUT UNCLASSIFIED"
+
+# Document structure patterns (regex-compatible)
+structure_patterns:
+  - "^(CONFIDENTIAL|RESTRICTED|INTERNAL)$"  # Single-word header
+  - "classification:\\s*(confidential|restricted|internal)"
+
+# Sensitivity label mappings
+label_map:
+  high_confidence_markers: "confidential"
+  internal_markers: "internal"

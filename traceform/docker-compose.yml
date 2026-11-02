@@ -1,0 +1,74 @@
+# Generate URL-safe database credentials and a Fernet master key before startup.
+# Production services verify schema; the migrate service upgrades once first.
+x-app: &app
+  build: .
+  image: traceform:${TRACEFORM_IMAGE_TAG:-local}
+  environment: &runtime
+    APP_ENV: production
+    TRACEFORM_AUTO_MIGRATE: "false"
+    DATABASE_URL: postgresql+asyncpg://traceform:${POSTGRES_PASSWORD:?Set a URL-safe POSTGRES_PASSWORD}@postgres:5432/traceform
+    API_KEYS: ${API_KEYS:?Set operator API keys}
+    TRACEFORM_WEB_ORIGINS: ${TRACEFORM_WEB_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+    TRACEFORM_MASTER_KEY: ${TRACEFORM_MASTER_KEY:?Set a Fernet master key}
+    OBJECT_STORAGE_PATH: /app/storage_data
+    GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.1-flash-lite}
+    ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-4-5}
+  volumes:
+    - app_data:/app/storage_data
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: traceform
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a URL-safe POSTGRES_PASSWORD}
+      POSTGRES_DB: traceform
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U traceform -d traceform"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+  migrate:
+    <<: *app
+    command: python -m db.migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+  api:
+    <<: *app
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/healthz/ready', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+    restart: unless-stopped
+  worker:
+    <<: *app
+    command: python -m orchestrator.worker
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-m", "orchestrator.worker", "--healthcheck"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  app_data:

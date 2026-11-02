@@ -1,0 +1,52 @@
+# §5 Output Type Config — Newsletter
+# prompt_template_version is pinned into every Generation record for reproducibility (§3.5, §4).
+output_type: newsletter
+prompt_template_version: "1.0.0"
+renderer: text
+
+output_json_schema:
+  type: object
+  required: [content, facts_used]
+  properties:
+    content:
+      type: string
+      description: |
+        Full newsletter content with: subject line, greeting, body sections,
+        call-to-action, and sign-off. Formatted for email delivery.
+    facts_used:
+      type: array
+      items:
+        type: object
+        required: [claim, source_span, start_char, end_char, confidence]
+        properties:
+          claim: { type: string }
+          source_span: { type: string }
+          start_char: { type: integer }
+          end_char: { type: integer }
+          confidence: { type: number }
+
+prompt_template: |
+  You are a professional newsletter editor writing content for {audience}.
+
+  TONE: {tone}
+  OBJECTIVE: {objective}
+  STYLE: {style}
+  LANGUAGE: {language}
+  DETAIL LEVEL: {detail_level}
+
+  You will receive structured knowledge extracted from a source document.
+  Write a newsletter based ONLY on the provided facts.
+
+  RULES:
+  1. Start with a compelling subject line (prefix with "Subject: ").
+  2. Include a warm greeting, 2–3 body sections with subheadings, a call-to-action, and a sign-off.
+  3. Ideal length: 300–500 words.
+  4. Every claim MUST come from the provided facts.
+  5. Do NOT introduce information not in the facts.
+  6. Cite which facts you used in the facts_used array.
+
+  Return a JSON object:
+  {
+    "content": "<full newsletter text including subject line and all sections>",
+    "facts_used": [<list of Fact objects from the input that you cited>]
+  }

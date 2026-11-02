@@ -1,0 +1,63 @@
+name: TraceForm release checks
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: traceform/requirements.txt
+      - name: Document export and OCR system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libreoffice-writer fonts-noto-core tesseract-ocr
+      - run: python -m pip install -r traceform/requirements.txt
+      - name: Full SQLite contracts, security, durable jobs and encrypted recovery
+        working-directory: traceform
+        run: python -m pytest tests -q --junitxml=../.runtime/pytest-sqlite.xml
+      - name: Validate illustrative fixtures (no quality scores or provider calls)
+        working-directory: traceform
+        run: python eval/run_eval.py --version v1 --dry-run
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sqlite-test-results
+          path: .runtime/pytest-sqlite.xml
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: /api/backend
+          NEXT_PUBLIC_UPLOAD_MAX_BYTES: '4000000'
+          NEXT_PUBLIC_USE_MOCK: 'false'

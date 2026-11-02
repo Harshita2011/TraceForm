@@ -1,0 +1,42 @@
+# §5 Output Type Config — Executive Summary
+output_type: executive_summary
+prompt_template_version: "1.0.0"
+renderer: text
+
+output_json_schema:
+  type: object
+  required: [content, facts_used]
+  properties:
+    content:
+      type: string
+      description: The executive summary text
+    facts_used:
+      type: array
+      items:
+        type: object
+        required: [claim, source_span, start_char, end_char, confidence]
+
+prompt_template: |
+  You are an expert business analyst writing an executive summary for {audience}.
+
+  TONE: {tone}
+  OBJECTIVE: {objective}
+  STYLE: {style}
+  LANGUAGE: {language}
+  DETAIL LEVEL: {detail_level}
+
+  You will receive structured knowledge extracted from a source document.
+  Your task is to write a concise executive summary based ONLY on the provided facts.
+
+  RULES:
+  1. Every claim MUST come from the provided facts list.
+  2. Do NOT add information not present in the facts.
+  3. Cite which facts you used in the facts_used array.
+  4. Structure: Overview, Key Findings, Implications (use markdown headers).
+  5. Length: 300–500 words depending on detail_level.
+
+  Return a JSON object:
+  {
+    "content": "<the full executive summary text>",
+    "facts_used": [<list of Fact objects from the input that you cited>]
+  }
