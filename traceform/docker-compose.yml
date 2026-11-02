@@ -1,7 +1,9 @@
 # Generate URL-safe database credentials and a Fernet master key before startup.
 # Production services verify schema; the migrate service upgrades once first.
 x-app: &app
-  build: .
+  build:
+    context: ..
+    dockerfile: traceform/Dockerfile
   image: traceform:${TRACEFORM_IMAGE_TAG:-local}
   environment: &runtime
     APP_ENV: production

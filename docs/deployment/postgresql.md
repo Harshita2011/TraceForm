@@ -47,7 +47,7 @@ proxy, and apply a shared edge login limit when running several API replicas; th
 built-in bounded login throttle is per process. Invite links are shared manually,
 expire after three days, and can be revoked in the team screen.
 
-See [PHASE7_VERIFICATION.md](PHASE7_VERIFICATION.md) for role and approval semantics.
+See [Phase 7 verification](../verification/phase-7.md) for role and approval semantics.
 
 ## Preserve data
 
@@ -87,4 +87,4 @@ without `--volumes`, retaining evidence and test data for inspection.
 
 The current schema head is `0009_measured_evaluations`, adding immutable benchmark datasets/cases and durable evaluation executions/outcomes. Run migrations with the matching API/worker image before starting it. Scoring runs through the same independent worker and does not call providers.
 
-The full container test suite includes encrypted SQLite and PostgreSQL backup/restore acceptance, restored login/draft/version/approval/comment/export checks, recorded operations and benchmark permissions. Restore tests create a dedicated `traceform_test_restore_*` database. See [RECOVERY.md](RECOVERY.md) for maintenance backups and empty-target recovery, [PHASE8_VERIFICATION.md](PHASE8_VERIFICATION.md) for current acceptance evidence, and [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for the explicitly deferred hosted frontend/backend setup.
+The full container test suite includes encrypted SQLite and PostgreSQL backup/restore acceptance, restored login/draft/version/approval/comment/export checks, recorded operations and benchmark permissions. Restore tests create a dedicated `traceform_test_restore_*` database. See [recovery guide](recovery.md) for maintenance backups and empty-target recovery, [Phase 8 verification](../verification/phase-8.md) for current acceptance evidence, and [Vercel deployment guide](vercel.md) for the explicitly deferred hosted frontend/backend setup.

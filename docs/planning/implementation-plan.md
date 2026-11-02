@@ -5,7 +5,7 @@ Prepared: 30 October 2026
 Progress: Phases 1–3 verified locally, including PostgreSQL Docker deployment checks.
 Phase 4 is implemented and locally verified with automated and isolated browser tests;
 real-provider acceptance remains pending because Gemini returned 503/504 errors.
-See `FEATURE_LEDGER.md` for evidence and supported boundaries. Phases 5–8 remain pending.
+See `docs/planning/feature-ledger.md` for evidence and supported boundaries. Phases 5–8 remain pending.
 
 ## Objective
 
@@ -21,7 +21,7 @@ review results, local drafts, Markdown/text downloads, stage events, provider ch
 bounded transient retries, retry of unsuccessful output types, and new-version creation.
 
 The initial targeted validation passed 66 backend tests and TypeScript checks. Current
-phase results are recorded in `FEATURE_LEDGER.md`; these original gaps are historical.
+phase results are recorded in `docs/planning/feature-ledger.md`; these original gaps are historical.
 
 Confirmed gaps from the code review:
 
@@ -71,7 +71,7 @@ Confirmed gaps from the code review:
 Status: verified on the local SQLite deployment, 30 October 2026. API restart, worker
 process interruption, duplicate requests, cancellation, provider settings and budget
 reservations have recorded checks. PostgreSQL 15 Docker deployment verification passed
-on 31 October 2026; see FEATURE_LEDGER.md and POSTGRES_DEPLOYMENT.md for evidence and scope.
+on 31 October 2026; see [feature ledger](feature-ledger.md) and [PostgreSQL deployment guide](../deployment/postgresql.md) for evidence and scope.
 
 ### Functionality
 - Use a durable worker queue for normal dispatch; make local development setup repeatable.
@@ -152,7 +152,7 @@ this gate remains open and is not represented as a verified output.
 
 ## Phase 5 — Durable editing, versions, and polished exports
 
-Implementation and local verification are recorded in [PHASE5_VERIFICATION.md](PHASE5_VERIFICATION.md).
+Implementation and local verification are recorded in [Phase 5 verification](../verification/phase-5.md).
 The live-provider acceptance gate remains pending; mocked checks are identified separately.
 
 ### Functionality
@@ -198,7 +198,7 @@ The live-provider acceptance gate remains pending; mocked checks are identified 
 Status: implemented and verified locally. Session authentication, workspace isolation,
 role controls, invitations, version-bound approvals, comments and searchable activity
 are implemented. Verification and initial-owner setup are documented in
-[PHASE7_VERIFICATION.md](PHASE7_VERIFICATION.md). Docker verification passed on 2 November 2026. Hosted and live-provider acceptance remain open.
+[Phase 7 verification](../verification/phase-7.md). Docker verification passed on 2 November 2026. Hosted and live-provider acceptance remain open.
 
 ### Functionality
 - Implement authenticated users, workspaces, invitations, and owner/editor/reviewer/viewer roles.
@@ -220,7 +220,7 @@ are implemented. Verification and initial-owner setup are documented in
 ## Phase 8 — Evaluation, operations, and release verification
 
 Status: implemented with local tests, browser and encrypted recovery evidence. See
-[PHASE8_VERIFICATION.md](PHASE8_VERIFICATION.md). Vercel hosting is prepared and deferred
+[Phase 8 verification](../verification/phase-8.md). Vercel hosting is prepared and deferred
 at the user's request; successful live verified-output acceptance remains an open release gate.
 
 ### Functionality
@@ -274,4 +274,4 @@ feature is not marked complete just because its screen exists.
 
 ## Phase 6 verification status
 
-Implemented and verified locally. SQLite/PostgreSQL regressions, frontend checks and browser workflow passed. Docker container verification passed in the 2 November 2026 follow-up; real-provider acceptance remains pending. See [PHASE6_VERIFICATION.md](PHASE6_VERIFICATION.md).
+Implemented and verified locally. SQLite/PostgreSQL regressions, frontend checks and browser workflow passed. Docker container verification passed in the 2 November 2026 follow-up; real-provider acceptance remains pending. See [Phase 6 verification](../verification/phase-6.md).

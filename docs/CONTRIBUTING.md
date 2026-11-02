@@ -1,6 +1,6 @@
 # Contributing to TraceForm
 
-Read [README.md](README.md) for setup and [FEATURE_LEDGER.md](FEATURE_LEDGER.md) for current scope and open release gates. Keep API, worker, migrations and feature UI changes consistent.
+Read [README.md](README.md) for setup and [feature ledger](planning/feature-ledger.md) for current scope and open release gates. Keep API, worker, migrations and feature UI changes consistent.
 
 ## Workflow
 

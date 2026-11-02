@@ -109,3 +109,7 @@ frontend/.visual-check/
 *.db-wal
 *.db-journal
 traceform/eval/reports/
+
+# Framework-generated local agent hints are documented under docs/development/.
+frontend/AGENTS.md
+frontend/CLAUDE.md

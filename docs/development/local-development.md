@@ -37,14 +37,14 @@ for this path. Legacy Celery entry points remain for compatibility only. Do not 
 legacy Celery dispatch against the same queued jobs.
 
 For the PostgreSQL Compose deployment, required credentials, persistent volumes and
-repeatable container verification, see [POSTGRES_DEPLOYMENT.md](POSTGRES_DEPLOYMENT.md).
+repeatable container verification, see [PostgreSQL deployment guide](../deployment/postgresql.md).
 Phase 4 evidence rules, review decisions and the remaining live-provider acceptance gate
-are described in [PHASE4_VERIFICATION.md](PHASE4_VERIFICATION.md).
+are described in [Phase 4 verification](../verification/phase-4.md).
 Server drafts, version actions, export dependencies and Phase 5 verification are described
-in [PHASE5_VERIFICATION.md](PHASE5_VERIFICATION.md).
+in [Phase 5 verification](../verification/phase-5.md).
 
 For PDF export on Windows, install LibreOffice or keep Docker Desktop running with a
-current local image: `docker build -t traceform:local traceform` from the repository root.
+current local image: `docker build -t traceform:local -f traceform/Dockerfile .` from the repository root.
 Linux container deployments include LibreOffice and Noto fonts in the application image.
 Markdown, TXT, DOCX and PPTX do not require a running conversion service.
 
@@ -64,7 +64,7 @@ your email and a password of at least 12 characters. This claims the existing le
 workspace and keeps its sources and outputs. No user account is created by migration.
 Owners invite teammates with one-time links and manage their roles under Team & workspace.
 The original workspace owner manages installation-wide provider settings. See
-[PHASE7_VERIFICATION.md](PHASE7_VERIFICATION.md) for permissions, approval and audit rules.
+[Phase 7 verification](../verification/phase-7.md) for permissions, approval and audit rules.
 
 Keys are Fernet-encrypted in immutable configuration snapshots. The API returns only
 whether a key is configured. Development creates `storage_data/.provider-master-key`
@@ -169,10 +169,10 @@ exports and deeper evidence/review work remain later phases.
 
 ## Combining documents (Phase 6)
 
-Open Create output → Combine documents. Choose 2–8 saved sources and run the separately budgeted analysis. Inspect facts and conflicts, choose how disputed claims should be handled, then continue through creation. Saved collections and completed analyses can be reused. The strictest sensitivity applies. See [PHASE6_VERIFICATION.md](PHASE6_VERIFICATION.md) for limits and verification.
+Open Create output → Combine documents. Choose 2–8 saved sources and run the separately budgeted analysis. Inspect facts and conflicts, choose how disputed claims should be handled, then continue through creation. Saved collections and completed analyses can be reused. The strictest sensitivity applies. See [Phase 6 verification](../verification/phase-6.md) for limits and verification.
 
 ## Evaluation, operations and release
 
-Open Evaluation to inspect recorded provider timings, known and unknown usage, date ranges and request failures. Benchmarks lets an owner/editor curate human claim/style assessments against exact saved versions and score them through the durable worker without provider calls. Results expose measurement versions and denominators. Historical/demo records do not become production measurements. See PHASE8_VERIFICATION.md for acceptance evidence, RECOVERY.md for encrypted maintenance backups and VERCEL_DEPLOYMENT.md for the deferred hosted release.
+Open Evaluation to inspect recorded provider timings, known and unknown usage, date ranges and request failures. Benchmarks lets an owner/editor curate human claim/style assessments against exact saved versions and score them through the durable worker without provider calls. Results expose measurement versions and denominators. Historical/demo records do not become production measurements. See [Phase 8 verification](../verification/phase-8.md) for acceptance evidence, [recovery guide](../deployment/recovery.md) for encrypted maintenance backups and [Vercel deployment guide](../deployment/vercel.md) for the deferred hosted release.
 
 `python eval/run_eval.py --version v1 --dry-run` validates illustrative fixtures only. It does not generate benchmark quality scores. `python scripts/verify_live_release.py` explicitly contacts the already configured provider using invented text, an isolated database and a $0.15 per-run estimated-cost ceiling; it may incur charges. It never copies user documents. A provider-busy or evidence-review failure remains a failed acceptance result.

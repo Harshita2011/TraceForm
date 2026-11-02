@@ -37,7 +37,7 @@ Runtime evidence: `.runtime/phase6-postgres-smoke.json`, `.runtime/phase6-preser
 
 ## Remaining acceptance boundaries
 
-- The initial Docker startup blocker was cleared on 2 November 2026. The current image passed the full PostgreSQL and SQLite suites, production API restart, outage readiness and container/storage persistence checks, including the Phase 6 tests. See the Docker follow-up in [PHASE7_VERIFICATION.md](PHASE7_VERIFICATION.md).
+- The initial Docker startup blocker was cleared on 2 November 2026. The current image passed the full PostgreSQL and SQLite suites, production API restart, outage readiness and container/storage persistence checks, including the Phase 6 tests. See the Docker follow-up in [Phase 7 verification](phase-7.md).
 - Real-provider end-to-end acceptance remains pending. One development sensitivity test accidentally reached Gemini with synthetic text `Public-facing text` and returned HTTP 200; no user documents were sent. Its billing amount was not established. This is not acceptance evidence. The test was isolated, the test Gemini key is now cleared, and non-local provider TCP connections are blocked.
 - Deduplication uses normalized exact claims, not universal semantic equivalence. Conflict detection can miss differences or flag distinct scopes. Operators must inspect important claims. Anchor checks confirm location, not factual truth.
 - Selections over 8 documents or 200,000 extracted characters are rejected without silent truncation. Team authentication, document ACLs, approvals and collaborative audit workflows remain Phase 7.

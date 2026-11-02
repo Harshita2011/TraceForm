@@ -1,7 +1,7 @@
 # Phase 4 — evidence and review
 
 Implemented 31 October 2026. Local automated and isolated browser checks are recorded
-in FEATURE_LEDGER.md. A successful live-provider acceptance run remains pending:
+in [feature ledger](../planning/feature-ledger.md). A successful live-provider acceptance run remains pending:
 the configured Gemini model returned intermittent 503 high-demand and 504 deadline
 errors. These failures were retained and never displayed as verified outputs.
 

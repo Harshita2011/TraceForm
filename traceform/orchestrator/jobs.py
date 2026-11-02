@@ -17,7 +17,7 @@ Reliability (§4):
 NOTE — Eager mode (task_always_eager=True) is set in tests so tasks run synchronously
 in the test process without a real broker. This validates application logic for
 dead-letter handling. Real retry/backoff timing is deferred to Phase 5 load tests
-against real infrastructure (see phases/10_evaluation_security.md note).
+against real infrastructure (see docs/archive/phases/06_evaluation_security.md note).
 """
 
 from __future__ import annotations

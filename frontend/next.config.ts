@@ -15,6 +15,8 @@ const cspHeader = `
   .trim();
 
 const nextConfig: NextConfig = {
+  // Keep repository Markdown under docs/; bundled framework guides remain available.
+  agentRules: false,
   async headers() {
     return [
       {

@@ -18,7 +18,15 @@ A source reference is inspectable evidence, not a guarantee of truth. Failed or 
 
 Phase 8 implementation is verified locally. The latest container suites passed **459 PostgreSQL tests** and **456 SQLite tests / 3 PostgreSQL-only skips**. The frontend passed **36 tests**, lint, TypeScript and its production build. Container/API restart, database-outage readiness and encrypted recovery were also checked.
 
-**Open release gates:** reliable live verified-output acceptance still needs claim-to-output reference alignment. Real provider calls produce saved drafts, but the latest live acceptance remains marked needs-review. Vercel deployment and hosted acceptance are explicitly deferred. See [Phase 8 verification](PHASE8_VERIFICATION.md) and the [feature ledger](FEATURE_LEDGER.md) for evidence and limitations. Local verification is not a claim that hosted production acceptance passed.
+**Open release gates:** reliable live verified-output acceptance still needs claim-to-output reference alignment. Real provider calls produce saved drafts, but the latest live acceptance remains marked needs-review. Vercel deployment and hosted acceptance are explicitly deferred. See [Phase 8 verification](verification/phase-8.md) and the [feature ledger](planning/feature-ledger.md) for evidence and limitations. Local verification is not a claim that hosted production acceptance passed.
+
+## Documentation
+
+- Start with [local development](development/local-development.md), [frontend setup](development/frontend.md) or [backend setup](development/backend.md).
+- See the [current verification report](verification/phase-8.md), [feature ledger](planning/feature-ledger.md) and [implementation plan](planning/implementation-plan.md).
+- Follow [contribution guidance](CONTRIBUTING.md) when preparing changes.
+- Earlier [phase specifications](archive/phases/00_repo_scaffold.md) are archived history; they do not override current setup or release status.
+- [Golden artifact examples](examples/golden-artifacts/) are illustrative test fixtures, not measured production-quality results.
 
 ## Local setup
 
@@ -52,7 +60,7 @@ python -m orchestrator.worker
 npm run dev
 ```
 
-The API and worker are separate long-running processes. Normal durable dispatch does not require Redis or Celery. PDF exports need LibreOffice; OCR needs Tesseract. The backend Docker image includes these system dependencies. See [local development](LOCAL_DEVELOPMENT.md) for complete operation, limits and troubleshooting.
+The API and worker are separate long-running processes. Normal durable dispatch does not require Redis or Celery. PDF exports need LibreOffice; OCR needs Tesseract. The backend Docker image includes these system dependencies. See [local development](development/local-development.md) for complete operation, limits and troubleshooting.
 
 ## Checks
 
@@ -79,13 +87,19 @@ GitHub Actions runs the full SQLite and frontend checks. The separate PostgreSQL
 | `traceform/` | FastAPI, ingestion, generation/review, durable worker, teams and migrations |
 | `scripts/` | Local startup, isolated verification and encrypted recovery tools |
 | `.github/workflows/` | Automated backend/frontend and PostgreSQL deployment checks |
-| `phases/` | Original phase specifications; current completion status is in the feature ledger |
+| `docs/` | Documentation, contribution guidance and pull request template |
+| `docs/development/` | Local setup, frontend/backend guides and framework guidance |
+| `docs/deployment/` | PostgreSQL, Vercel and encrypted recovery |
+| `docs/verification/` | Phase acceptance evidence and remaining release gates |
+| `docs/planning/` | Current implementation plan and feature ledger |
+| `docs/archive/phases/` | Historical phase specifications |
+| `docs/examples/golden-artifacts/` | Illustrative output fixtures used by format tests |
 
 ## Deployment and recovery
 
-- [PostgreSQL and Docker](POSTGRES_DEPLOYMENT.md): persistent API/worker/database deployment and isolated verification.
-- [Vercel preparation](VERCEL_DEPLOYMENT.md): frontend root directory, HTTPS backend, environment variables and hosted limits. No live Vercel deployment is claimed.
-- [Encrypted recovery](RECOVERY.md): stopped-writer backups and restoration into a separate empty target.
-- [Implementation plan](IMPLEMENTATION_PLAN.md): feature phases and release acceptance criteria.
+- [PostgreSQL and Docker](deployment/postgresql.md): persistent API/worker/database deployment and isolated verification.
+- [Vercel preparation](deployment/vercel.md): frontend root directory, HTTPS backend, environment variables and hosted limits. No live Vercel deployment is claimed.
+- [Encrypted recovery](deployment/recovery.md): stopped-writer backups and restoration into a separate empty target.
+- [Implementation plan](planning/implementation-plan.md): feature phases and release acceptance criteria.
 
 Environment files, private keys, local databases, uploads, generated evaluation reports, recovery bundles, runtime logs and build output are excluded from version control. Commit only placeholder environment examples. Do not include credentials or private source documents in issues or pull requests.

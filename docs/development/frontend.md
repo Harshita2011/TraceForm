@@ -2,7 +2,7 @@
 
 Next.js 16 / React 19 interface for the TraceForm API. See the [project README](../README.md) for installation and the complete three-process startup.
 
-From this directory:
+From the repository’s `frontend/` directory:
 
 ```text
 npm ci
@@ -13,4 +13,4 @@ Copy `.env.example` to `.env.local`. Use `NEXT_PUBLIC_API_URL=/api/backend`, ser
 
 `npm test`, `npm run lint`, `npx tsc --noEmit` and `npm run build` are the frontend checks. The UI needs both the API and independent worker for generation and benchmark scoring.
 
-Hosted setup is documented in [Vercel deployment](../VERCEL_DEPLOYMENT.md); live deployment is deferred. Local operation, first-owner setup, limits and recovery are documented in [local development](../LOCAL_DEVELOPMENT.md).
+Hosted setup is documented in [Vercel deployment](../deployment/vercel.md); live deployment is deferred. Local operation, first-owner setup, limits and recovery are documented in [local development](local-development.md).

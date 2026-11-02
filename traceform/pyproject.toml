@@ -3,7 +3,7 @@ name = "traceform"
 version = "0.1.0"
 description = "AI content generation platform with full traceability and compliance"
 authors = []
-readme = "README.md"
+readme = "../docs/development/backend.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"

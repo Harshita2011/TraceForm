@@ -1,7 +1,7 @@
 ﻿"""
 # Phase 2 §6 Load Test — Fan-Out Latency & Stateless API Validation
 
-NOT CI-gated by default (see phases/02_async_generation.md §6).
+NOT CI-gated by default (see docs/archive/phases/02_async_generation.md §6).
 Run manually or in a dedicated nightly job.
 
     pytest tests/load_test_fanout.py -v -s

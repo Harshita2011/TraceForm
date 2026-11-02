@@ -1,0 +1,27 @@
+# The monorepo build needs only backend code and documentation fixtures.
+**
+!traceform/
+!traceform/**
+!docs/
+!docs/**
+**/.git
+**/.env
+**/.env.*
+**/*.env
+**/*.env.*
+**/*.pem
+**/*.key
+**/*.tfbackup
+**/*.db
+**/*.db-*
+**/*.sqlite*
+**/storage_data
+**/.runtime-deps
+**/.runtime
+**/__pycache__
+**/.pytest_cache
+**/*.log
+**/.venv
+**/venv
+**/.aws
+**/.codex

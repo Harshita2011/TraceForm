@@ -3,7 +3,7 @@ name: PostgreSQL container deployment verification
 on:
   workflow_dispatch:
   pull_request:
-    paths: ['traceform/**', 'scripts/verify*postgres.py', 'scripts/verify_docker.py', '.github/workflows/postgres-deployment.yml']
+    paths: ['traceform/**', 'docs/examples/**', '.dockerignore', 'scripts/verify*postgres.py', 'scripts/verify_docker.py', '.github/workflows/postgres-deployment.yml']
 
 permissions:
   contents: read

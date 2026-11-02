@@ -243,8 +243,8 @@ class TestExecutiveCommunicationScoring:
 
 class TestGoldenArtifactBenchmarkSuite:
     def test_all_golden_benchmark_files_exist_and_valid(self):
-        """Verify all 11 golden benchmark files exist in golden_artifacts/ and have required sections."""
-        golden_dir = Path(__file__).parent.parent / "golden_artifacts"
+        """Verify all 11 golden benchmark files exist in docs/examples/golden-artifacts/ and have required sections."""
+        golden_dir = Path(__file__).resolve().parents[2] / "docs" / "examples" / "golden-artifacts"
         assert golden_dir.exists() and golden_dir.is_dir()
 
         for key, bp in BLUEPRINT_REGISTRY.items():

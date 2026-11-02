@@ -19,7 +19,7 @@ Never put provider keys, `API_KEYS`, `DATABASE_URL` or `TRACEFORM_MASTER_KEY` in
 
 ## Backend configuration
 
-Follow POSTGRES_DEPLOYMENT.md for the image, migration service, API, worker and persistent volumes. Configure `APP_ENV=production`, `TRACEFORM_AUTO_MIGRATE=false`, an explicit strong `API_KEYS`, `TRACEFORM_MASTER_KEY`, and `TRACEFORM_WEB_ORIGINS=https://YOUR-PROJECT.vercel.app,https://YOUR-DOMAIN`. Include each authorized preview origin explicitly if previews must write to this backend. Run `python -m db.migrate` once before starting services from the matching image. Schema head is `0009_measured_evaluations`.
+Follow [PostgreSQL deployment guide](postgresql.md) for the image, migration service, API, worker and persistent volumes. Configure `APP_ENV=production`, `TRACEFORM_AUTO_MIGRATE=false`, an explicit strong `API_KEYS`, `TRACEFORM_MASTER_KEY`, and `TRACEFORM_WEB_ORIGINS=https://YOUR-PROJECT.vercel.app,https://YOUR-DOMAIN`. Include each authorized preview origin explicitly if previews must write to this backend. Run `python -m db.migrate` once before starting services from the matching image. Schema head is `0009_measured_evaluations`.
 
 Terminate HTTPS at the backend ingress and proxy to the loopback-bound API port. Keep PostgreSQL private and share the same storage volume between API and worker. Check `/api/v1/healthz/ready` and the worker healthcheck separately. Readiness alone does not prove an external provider can generate a verified output.
 
@@ -37,6 +37,6 @@ The proxy streams responses and preserves content-disposition and request IDs. A
 4. Save a version, review/approve it and export TXT/DOCX/PDF; check response headers and actual file content.
 5. Curate and score a dataset, inspect results and confirm recomputation matches. Test empty and invalid date ranges.
 6. Verify cross-workspace isolation, HTTPS cookies, exact allowed origins and the documented upload boundary.
-7. Make an encrypted backup and restore it into a separate environment using RECOVERY.md. Never restore over the live installation.
+7. Make an encrypted backup and restore it into a separate environment using [recovery guide](recovery.md). Never restore over the live installation.
 
 Until these hosted checks pass, the deployment remains prepared, not production verified.

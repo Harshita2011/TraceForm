@@ -1,7 +1,7 @@
 # TraceForm feature ledger
 
 Current status: Phase 8 is implemented with local automated/browser and encrypted recovery evidence.
-See [PHASE8_VERIFICATION.md](PHASE8_VERIFICATION.md) for measured-result definitions and current release gates.
+See [Phase 8 verification](../verification/phase-8.md) for measured-result definitions and current release gates.
 Vercel hosting is prepared and explicitly deferred; live verified-output acceptance remains open.
 
 Phases 1–3 verified locally, 31 October 2026. This ledger separates working features from
@@ -112,7 +112,7 @@ open; shared editing and richer exports belong to Phase 5.
 | Usage and budgets | Atomic per-call reservations, saved provider/model/pricing version and response/usage/error records | Used/reserved/limit, incomplete-usage and overrun disclosure; technical provenance collapsed by default |
 | Provider settings | GET/PUT `/settings/provider`, POST `/settings/provider/test`, POST `/settings/provider/models`; admin writes and revision CAS | Provider/model picker or manual ID, key replacement/removal, rates, test/save feedback and read-only permission state |
 | Credential protection | Fernet-encrypted immutable snapshots; active settings pointer; production master key and operator authentication required | Only key-configured status is returned; credential-bearing validation input is never echoed |
-| Schema/setup | Frozen additive migration history; existing schema adoption and repeatable upgrades | Local setup in `LOCAL_DEVELOPMENT.md`; hidden Windows launcher and independent Docker worker |
+| Schema/setup | Frozen additive migration history; existing schema adoption and repeatable upgrades | Local setup in `docs/development/local-development.md`; hidden Windows launcher and independent Docker worker |
 
 ### Recorded checks
 
@@ -195,7 +195,7 @@ deployment credentials and provides explicit migration/readiness/worker health c
 
 Evidence: `.runtime/docker-verification/report.json`, `pytest-postgres.log`,
 `pytest-sqlite.log`, `production-smoke-report.json`, `readiness-outage.log` and `restart.log`.
-Repeatable commands are in POSTGRES_DEPLOYMENT.md; scripts are
+Repeatable commands are in [PostgreSQL deployment guide](../deployment/postgresql.md); scripts are
 `scripts/verify_docker.py` and `scripts/verify_postgres.py`. A dedicated GitHub Actions
 workflow was added; its hosted run has not been executed from this workspace.
 
@@ -255,7 +255,7 @@ the service is available.
 Anchor checks do not prove that every output claim is covered or semantically correct.
 Model reviews can miss errors. Rounded calculations/unit conversions, shared editing,
 re-review of saved edits, team workspaces/approvals and richer exports are outside this
-phase. See PHASE4_VERIFICATION.md for rules, evidence and the remaining gate. Phase 5 is
+phase. See [Phase 4 verification](../verification/phase-4.md) for rules, evidence and the remaining gate. Phase 5 is
 recorded below; Phases 6–8 remain pending.
 
 ## Phase 5 — durable editing, versions and exports
@@ -282,7 +282,7 @@ outage readiness and container persistence checks passed.
 After the last export emphasis correction, the complete **17-case Phase 5 suite** passed
 again in the container. The additional case is recorded separately from the full-suite counts.
 
-See [PHASE5_VERIFICATION.md](PHASE5_VERIFICATION.md) for workflow rules, exact artifacts,
+See [Phase 5 verification](../verification/phase-5.md) for workflow rules, exact artifacts,
 export dependencies and remaining acceptance boundaries. Operator-private editing uses
 the current API-key identity; team authentication/workspace isolation remains Phase 7.
 
@@ -298,7 +298,7 @@ the current API-key identity; team authentication/workspace isolation remains Ph
 | Verification | SQLite 430 passed / 4 skipped; PostgreSQL 433 passed / 1 skipped; frontend 25 passed; lint/types/build passed; PostgreSQL production restart smoke passed |
 | Deployment boundary | Normal SQLite app migrated and restored with existing business rows unchanged. Docker follow-up passed on 2 November 2026; live-provider acceptance pending |
 
-See [PHASE6_VERIFICATION.md](PHASE6_VERIFICATION.md) for limits, evidence, the test-isolation incident and remaining release gates. Team/document ACLs remain Phase 7; source access uses the current shared API-key library.
+See [Phase 6 verification](../verification/phase-6.md) for limits, evidence, the test-isolation incident and remaining release gates. Team/document ACLs remain Phase 7; source access uses the current shared API-key library.
 
 ## Phase 7 — verified locally
 
@@ -312,9 +312,9 @@ See [PHASE6_VERIFICATION.md](PHASE6_VERIFICATION.md) for limits, evidence, the t
 | Verification | Full checkpoints: 439 SQLite / 442 PostgreSQL passed, environment-specific skips documented; final expanded team/audit suite 16 passed on each; frontend 31 tests plus lint/types/build passed |
 | Data and startup | Existing business records preserved; normal API/worker/frontend restored. User completes first-owner setup with their own credentials |
 
-See [PHASE7_VERIFICATION.md](PHASE7_VERIFICATION.md). Docker/container verification passed on 2 November 2026; earlier live-provider acceptance remains pending. Phase 8 covers evaluation, operations and release verification.
+See [Phase 7 verification](../verification/phase-7.md). Docker/container verification passed on 2 November 2026; earlier live-provider acceptance remains pending. Phase 8 covers evaluation, operations and release verification.
 
-Docker follow-up: current image **446 PostgreSQL tests passed**, **443 SQLite tests passed / 3 PostgreSQL-only skips**. Production restart, outage readiness, non-root runtime, and container/storage persistence checks passed. A heartbeat-error recovery issue found during verification was fixed and covered by a new fault-injection test. See [PHASE7_VERIFICATION.md](PHASE7_VERIFICATION.md).
+Docker follow-up: current image **446 PostgreSQL tests passed**, **443 SQLite tests passed / 3 PostgreSQL-only skips**. Production restart, outage readiness, non-root runtime, and container/storage persistence checks passed. A heartbeat-error recovery issue found during verification was fixed and covered by a new fault-injection test. See [Phase 7 verification](../verification/phase-7.md).
 
 
 ## Phase 8 — evaluation, operations and release preparation
@@ -330,7 +330,7 @@ Docker follow-up: current image **446 PostgreSQL tests passed**, **443 SQLite te
 | Local runtime | Schema 0009; original 23 sources, 38 runs and 51 outputs preserved; API/worker and production frontend restarted |
 | Remaining release gates | Live provider calls complete, but generated claim excerpt failures still block verified-output acceptance. Vercel/public backend deployment explicitly deferred. Real first-owner account remains for user setup |
 
-See [PHASE8_VERIFICATION.md](PHASE8_VERIFICATION.md), [RECOVERY.md](RECOVERY.md), and [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md).
+See [Phase 8 verification](../verification/phase-8.md), [recovery guide](../deployment/recovery.md), and [Vercel deployment guide](../deployment/vercel.md).
 
 Phase 8 final container regression: **459 PostgreSQL tests passed; 456 SQLite tests passed / 3 PostgreSQL-only skips**. Frontend: 36 tests, lint, TypeScript and production build passed.
 
