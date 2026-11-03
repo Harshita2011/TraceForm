@@ -32,6 +32,23 @@ test('first-owner setup forwards only an explicitly entered installation key',as
  const response=await route.POST(request('/api/v1/auth/setup',{'X-Installation-Key':'entered-admin-key'},'POST'),context('/api/v1/auth/setup'));
  assert.equal(response.status,201);
 });
+
+test('public registration forwards credentials without requiring or exposing an installation key',async()=>{
+ const route=proxy(async(url,options)=>{
+  assert.equal(url,'https://api.example.test/api/v1/auth/register');
+  assert.equal(options.method,'POST');
+  assert.equal(options.headers.get('origin'),'https://app.example.test');
+  assert.equal(options.headers.get('x-api-key'),null);
+  assert.equal(options.headers.get('x-installation-key'),null);
+  assert.equal(new TextDecoder().decode(options.body),'registration fixture');
+  return new Response('{}',{status:201,headers:{'Set-Cookie':'traceform_session=registered; Secure; HttpOnly; SameSite=Strict; Path=/'}});
+ },{VERCEL:'1',TRACEFORM_API_URL:'https://api.example.test'});
+ const req=request('/api/v1/auth/register',{'origin':'https://app.example.test','x-installation-key':'must-not-forward'},'POST');
+ req.arrayBuffer=async()=>new TextEncoder().encode('registration fixture').buffer;
+ const response=await route.POST(req,context('/api/v1/auth/register'));
+ assert.equal(response.status,201);
+ assert.match(response.headers.get('set-cookie'),/Secure; HttpOnly/);
+});
 test('proxy rejects path traversal and non-API destinations before any upstream call',async()=>{
  const route=proxy(async()=>{throw Error('Must not fetch');});
  for(const parts of [['api','v1','..','settings'],['http:','attacker.test'],['api','v1','sources/../../settings']]){

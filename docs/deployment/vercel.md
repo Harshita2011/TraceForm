@@ -32,7 +32,7 @@ The proxy streams responses and preserves content-disposition and request IDs. A
 ## Release acceptance after URLs exist
 
 1. Confirm frontend build, backend migration, API readiness and worker heartbeat.
-2. Complete first-owner setup in the UI; sign in and verify a viewer cannot write.
+2. Create an account without an invitation, confirm its workspace is empty and private, sign out and sign in again. Separately complete installation admin setup if legacy data/provider configuration must be managed, and verify a viewer cannot write.
 3. Upload a small synthetic source, generate one output with an explicit small budget and inspect provider calls, claims and review results. Exercise failure, cancellation and retry.
 4. Save a version, review/approve it and export TXT/DOCX/PDF; check response headers and actual file content.
 5. Curate and score a dataset, inspect results and confirm recomputation matches. Test empty and invalid date ranges.

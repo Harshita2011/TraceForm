@@ -75,6 +75,85 @@ async def test_initial_setup_recovers_from_stale_cookie_but_requires_admin_key(t
     assert (await c.post('/api/v1/auth/setup',json=payload)).status_code==201
     assert (await c.get('/api/v1/auth/me')).json()['role']=='owner'
 
+@pytest.fixture
+def registration_limits(monkeypatch):
+    from collections import OrderedDict
+    monkeypatch.setattr('teams.login_limits.attempts',OrderedDict())
+
+async def test_public_signup_private_workspace_and_signin(team_client,session_factory,registration_limits):
+    c=team_client;c.headers.pop('X-API-Key')
+    c.cookies.set('traceform_session','obsolete-cookie',domain='testserver.local',path='/')
+    response=await c.post('/api/v1/auth/register',json={'email':' New@Example.test ','password':PASSWORD,'name':' New user '})
+    assert response.status_code==201,response.text
+    account=response.json();assert account['workspace_id']!='legacy'
+    me=(await c.get('/api/v1/auth/me')).json()
+    assert me['email']=='new@example.test' and me['name']=='New user' and me['role']=='owner'
+    assert len(me['workspaces'])==1 and me['workspace_id']==account['workspace_id']
+    assert 'HttpOnly' in response.headers['set-cookie'] and 'SameSite=strict' in response.headers['set-cookie']
+    await c.post('/api/v1/auth/logout')
+    assert (await c.post('/api/v1/auth/login',json={'email':'new@example.test','password':PASSWORD})).status_code==200
+    async with session_factory() as db:
+        user=await db.get(User,account['id']);assert PASSWORD not in user.password_hash
+        event=(await db.execute(select(AuditRecord).where(AuditRecord.event_type=='ACCOUNT_CREATED'))).scalar_one()
+        assert event.workspace_id==account['workspace_id'] and event.operator_id==user.id
+
+async def test_signup_cannot_claim_existing_workspace_or_admin_privileges(team_client,session_factory,registration_limits):
+    c=team_client;owner=await setup(c)
+    s,g,a,v=await seed(session_factory,owner=owner['id'])
+    # Registration while signed in must also isolate its writes from that session.
+    c.headers.pop('X-API-Key')
+    response=await c.post('/api/v1/auth/register',json={'email':'separate@example.test','password':PASSWORD,'name':'Separate'})
+    assert response.status_code==201,response.text
+    assert response.json()['workspace_id']!='legacy'
+    assert (await c.get('/api/v1/sources/')).json()==[]
+    assert (await c.get(f'/api/v1/sources/{s.id}')).status_code==404
+    assert (await c.post('/api/v1/auth/switch',json={'workspace_id':'legacy'})).status_code==404
+    assert (await c.post('/api/v1/auth/setup',json={'email':'claim@example.test','password':PASSWORD})).status_code==403
+
+async def test_signup_duplicate_email_leaves_no_orphan_workspace(team_client,session_factory,registration_limits):
+    from sqlalchemy import func
+    c=team_client;c.headers.pop('X-API-Key')
+    payload={'email':'duplicate@example.test','password':PASSWORD,'name':'User'}
+    first=await c.post('/api/v1/auth/register',json=payload);assert first.status_code==201
+    duplicate=await c.post('/api/v1/auth/register',json={**payload,'email':' DUPLICATE@example.test '})
+    assert duplicate.status_code==409 and PASSWORD not in duplicate.text
+    async with session_factory() as db:
+        assert await db.scalar(select(func.count(User.id)))==1
+        assert await db.scalar(select(func.count(Workspace.id)))==1
+        assert await db.scalar(select(func.count(Member.user_id)))==1
+        assert await db.scalar(select(func.count(SessionToken.token_hash)))==1
+
+async def test_signup_preserves_admin_claim_for_legacy_data(team_client,session_factory,registration_limits):
+    c=team_client
+    s,g,a,v=await seed(session_factory)
+    assert (await c.post('/api/v1/auth/register',json={'email':'public@example.test','password':PASSWORD})).status_code==201
+    assert (await c.get('/api/v1/auth/status')).json()['setup_required'] is True
+    await c.post('/api/v1/auth/logout')
+    await setup(c)
+    assert (await c.get(f'/api/v1/sources/{s.id}')).status_code==200
+    assert (await c.get('/api/v1/auth/status')).json()['setup_required'] is False
+
+async def test_signup_validation_origin_and_throttle(team_client,registration_limits):
+    c=team_client;c.headers.pop('X-API-Key')
+    payload={'email':'new@example.test','password':PASSWORD,'name':'Name'}
+    assert (await c.post('/api/v1/auth/register',json={**payload,'password':'short'})).status_code==422
+    assert (await c.post('/api/v1/auth/register',json={**payload,'email':'invalid'})).status_code==422
+    assert (await c.post('/api/v1/auth/register',json={**payload,'name':' '})).status_code==422
+    denied=await c.post('/api/v1/auth/register',json=payload,headers={'Origin':'https://attacker.invalid'})
+    assert denied.status_code==403
+    for _ in range(10):
+        await c.post('/api/v1/auth/register',json=payload)
+    assert (await c.post('/api/v1/auth/register',json=payload)).status_code==429
+
+async def test_signup_production_cookie_is_secure(team_client,registration_limits,monkeypatch):
+    monkeypatch.setenv('APP_ENV','production')
+    c=team_client;c.headers.pop('X-API-Key')
+    response=await c.post('/api/v1/auth/register',json={'email':'secure@example.test','password':PASSWORD,'name':'User'})
+    assert response.status_code==201
+    cookie=response.headers['set-cookie']
+    assert 'Secure' in cookie and 'HttpOnly' in cookie and 'SameSite=strict' in cookie
+    assert 'Domain=' not in cookie
+
 async def test_workspace_isolation_every_resource_family(team_client,session_factory):
     c=team_client;owner=await setup(c);s,g,a,v=await seed(session_factory,owner=owner['id'])
     from db.models import SourceCollection,CreationPreset,SynthesisAnalysis,VersionOperation,EvaluationRun

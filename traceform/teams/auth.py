@@ -41,7 +41,7 @@ class WorkspaceBoundary(BaseHTTPMiddleware):
                 if session and member and aware(session.expires_at)>utcnow():
                     ctx={'user_id':user.id,'email':user.email,'name':user.name,'role':member.role,'workspace_id':session.space_id}
             finally:await generator.aclose()
-            if not ctx and request.url.path not in {'/api/v1/auth/login','/api/v1/auth/logout','/api/v1/auth/status','/api/v1/auth/accept','/api/v1/auth/setup'}:
+            if not ctx and request.url.path not in {'/api/v1/auth/login','/api/v1/auth/register','/api/v1/auth/logout','/api/v1/auth/status','/api/v1/auth/accept','/api/v1/auth/setup'}:
                 return JSONResponse({'detail':'Your session expired. Sign in again.'},status_code=401)
         if request.method not in {'GET','HEAD','OPTIONS'}:
             origin=request.headers.get('origin')
@@ -54,7 +54,7 @@ class WorkspaceBoundary(BaseHTTPMiddleware):
             decision_action='/team-reviews/' in path and path.endswith('/decision')
             if not auth_action and (ctx['role']=='viewer' or ctx['role']=='reviewer' and not(comment_action or decision_action)):
                 return JSONResponse({'detail':'Your workspace role is read-only for this action.'},status_code=403)
-        t=workspace.set(None if request.url.path=='/api/v1/auth/accept' else ctx['workspace_id'] if ctx else 'legacy');u=identity.set(ctx)
+        t=workspace.set(None if request.url.path in {'/api/v1/auth/accept','/api/v1/auth/register'} else ctx['workspace_id'] if ctx else 'legacy');u=identity.set(ctx)
         from security.api_keys import resolve_operator_from_key
         key_context=resolve_operator_from_key(request.headers.get('x-api-key'))
         a=actor.set(ctx['user_id'] if ctx else key_context.operator_id if key_context else 'dev-no-auth')

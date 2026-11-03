@@ -49,12 +49,36 @@ def audit(db,action,resource=None,**details):
 
 @router.get('/auth/status')
 async def status(db:DbSession):
-    count=await db.scalar(select(func.count(User.id)))
-    return {'setup_required':not count,'authenticated':bool(identity.get())}
+    installation=await db.get(Workspace,'legacy')
+    return {'setup_required':installation is None,'authenticated':bool(identity.get())}
+
+@router.post('/auth/register',status_code=201)
+async def register(data:Credentials,db:DbSession,response:Response,request:Request):
+    """Public registration owns a new workspace, never the installation's data."""
+    from teams.login_limits import attempt
+    try:
+        attempt(request.client.host if request.client else 'unknown','registration')
+    except HTTPException as exc:
+        if exc.status_code==429:
+            raise HTTPException(429,'Too many account creation attempts. Try again in five minutes.') from None
+        raise
+    user=User(email=data.email,name=data.name,password_hash=await asyncio.to_thread(password,data.password))
+    space=Workspace(name=f"{data.name[:80]}'s workspace")
+    try:
+        db.add_all([user,space]);await db.flush()
+        db.add(Member(space_id=space.id,user_id=user.id,role='owner'))
+        await issue(db,user,space.id,response)
+        db.add(AuditRecord(workspace_id=space.id,event_type='ACCOUNT_CREATED',operator_id=user.id,
+                           resource_id=user.id,metadata_json={}))
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(409,'Unable to create this account. Try signing in or use another email address.') from None
+    return {'id':user.id,'workspace_id':space.id}
 
 @router.post('/auth/setup',status_code=201)
 async def setup(data:Credentials,db:DbSession,response:Response,operator:CurrentAdmin):
-    if await db.scalar(select(func.count(User.id))):raise HTTPException(409,'Account setup is already complete. Ask an owner for an invitation.')
+    if await db.get(Workspace,'legacy'):raise HTTPException(409,'Installation setup is already complete. Sign in or create a separate account.')
     user=User(email=data.email,name=data.name.strip(),password_hash=await asyncio.to_thread(password,data.password))
     db.add(user);db.add(Workspace(id='legacy',name='My workspace'))
     try:

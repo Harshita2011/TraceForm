@@ -7,7 +7,7 @@ async function proxy(request: NextRequest, context: {params: Promise<{path: stri
   const size=Number(request.headers.get('content-length')||0);
   if(process.env.VERCEL&&size>4250000)return Response.json({detail:'This deployment accepts requests up to 4 MB. Split or reduce the source file.'},{status:413});
   const upstreamRoute=['/api/v1/sources','/api/v1/generations','/api/v1/presets'].includes(route)?route+'/':route;
-  const publicAuth=['status','login','setup','accept','logout'].some(name=>route==='/api/v1/auth/'+name);
+  const publicAuth=['status','login','register','setup','accept','logout'].some(name=>route==='/api/v1/auth/'+name);
   if(!request.cookies.get('traceform_session')&&!publicAuth)return Response.json({detail:'Sign in to your workspace.'},{status:401});
   const headers=new Headers();
   for(const name of ['content-type','cookie','origin','idempotency-key']) {const value=request.headers.get(name);if(value)headers.set(name,value);}

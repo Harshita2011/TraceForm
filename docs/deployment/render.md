@@ -61,7 +61,9 @@ Bootstrap creates only `/var/data/traceform`, assigns that directory to UID/GID 
 
 After Render reports healthy, copy its public HTTPS service URL, for example `https://YOUR-SERVICE.onrender.com`. Set that value as **server-only** `TRACEFORM_API_URL` in Vercel, keep `NEXT_PUBLIC_API_URL=/api/backend`, and redeploy the frontend. See [Vercel setup](vercel.md).
 
-Open the frontend and create your first owner using your email, a password of at least 12 characters, and the random installation key from `API_KEYS` (only the part before `:administrator:admin`). Choose your own password; keep both credentials private.
+Open the frontend and choose **Create account**. Enter your name, email and a password of at least 12 characters. Registration signs you into your own new private workspace without an invitation or installation key. Existing accounts can sign in normally.
+
+The installation administrator can separately use **Installation admin setup** while signed out to claim legacy sources and outputs and manage shared provider configuration. That action requires the random installation key from `API_KEYS` (only the part before `:administrator:admin`). Public registrations do not receive installation-wide administration. Keep keys and passwords private. Public registration does not verify email ownership or send email; apply deployment-level abuse controls in addition to the backend's bounded registration throttle.
 
 ## Acceptance and recovery
 

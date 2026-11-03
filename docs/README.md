@@ -8,7 +8,7 @@ TraceForm turns source documents into deliverables with source references, revie
 - Multiple output formats, multi-source analysis and explicit conflict handling.
 - Budgeted provider calls, durable job progress, cancellation and retry.
 - Source passage inspection, review findings, editable drafts, immutable versions and exports.
-- Authenticated workspaces, member roles, invitations, comments, approvals and activity history.
+- Public account creation with private workspaces, member roles, optional team invitations, comments, approvals and activity history.
 - Versioned human-adjudicated benchmark datasets and an operations dashboard with recorded usage and timings.
 - Additive database migrations, encrypted recovery bundles and automated release checks.
 
@@ -50,7 +50,9 @@ On Windows, start the API, worker and frontend together:
 powershell -ExecutionPolicy Bypass -File scripts/start-local.ps1 -Python .venv/Scripts/python.exe
 ```
 
-Open [the local workspace](http://localhost:3000/dashboard/generations). Complete first-owner setup with your own credentials and the installation administrator key. The setup preserves existing sources and outputs. The API and worker must use the same database, storage directory, master key and application release.
+Open [the local workspace](http://localhost:3000/dashboard/generations), choose **Create account**, and enter your name, email and a password of at least 12 characters. No invitation or installation key is needed. Each account owns a new private workspace and is signed in immediately. Existing users choose **Sign in**; joining an existing workspace still uses an optional team invitation.
+
+Installation administrators can separately choose **Installation admin setup** before the legacy workspace is claimed. This requires the installation administrator key and preserves access to existing sources and outputs. Public registration never claims legacy documents or grants installation-wide provider administration. The API and worker must use the same database, storage directory, master key and application release.
 
 For separate terminals, run the following backend commands from `traceform/`, using the configured environment, and the frontend command from the root:
 
